@@ -16,9 +16,9 @@ func GetUsers() (interface{}, error) {
 }
 
 func GetUserById(id int) (interface{}, error) {
-	var user models.User
+	var user []models.User
 
-	if e := config.DB.Where("id = ?", id).Find(&user).Error; e != nil {
+	if e := config.DB.Where("id = ? and deleted.at is NULL", id).Find(&user).Error; e != nil {
 		return nil, errors.New("User not found")
 	}
 	return user, nil
@@ -46,4 +46,11 @@ func DeleteUser(id int) error {
 		return errors.New("cant delete user")
 	}
 	return nil
+}
+
+func LoginUser(user *models.User) (interface{}, error) {
+	if err := config.DB.Where("email = ? and password = ? and deleted_at is NULL ", user.Email, user.Password).First(user).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
 }
