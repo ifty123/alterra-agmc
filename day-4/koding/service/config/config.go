@@ -10,7 +10,7 @@ import (
 
 var DB *gorm.DB
 
-func InitDB() {
+func InitDB() *gorm.DB {
 
 	config := map[string]string{
 		"DB_Username": "spark",
@@ -33,6 +33,8 @@ func InitDB() {
 		panic(e)
 	}
 	InitMigrate()
+
+	return DB
 }
 
 func InitMigrate() {
