@@ -3,6 +3,7 @@ package main
 import (
 	"day2-task1/config"
 	"day2-task1/controllers"
+	"day2-task1/lib/database"
 	mid "day2-task1/middleware"
 	"day2-task1/routes"
 
@@ -18,8 +19,9 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 }
 
 func main() {
-	config.InitDB()
-	uh := controllers.NewUserController(nil)
+	conf := config.InitDB()
+	userRepo := database.NewUsersRepository(conf)
+	uh := controllers.NewUserController(userRepo)
 	e := routes.New(uh)
 	e.Validator = &CustomValidator{validator: validator.New()}
 	mid.LogMiddleware(e)
